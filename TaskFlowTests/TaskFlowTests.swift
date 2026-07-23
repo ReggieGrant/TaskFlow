@@ -9,30 +9,89 @@ import XCTest
 @testable import TaskFlow
 
 final class TaskFlowTests: XCTestCase {
-
+    
+    var viewModel: TaskListViewModel!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        viewModel = TaskListViewModel()
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    
+    
+    
+    // MARK: Class #2
+    // UI Test
+    func test_addTask_UI() {
+        // Arrange
+        let app = XCUIApplication()
+        app.launch()
+        
+        // Act
+        app.textFields["New Task..."].typeText("Mlik")
+        app.buttons["Add"].tap()
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
+    
+    // TDD priority test
+    func test_addTask_defaultPriorityIsMedium(){
+        // Arrange
+        
+        // Act
+        viewModel.addTask(title: "Task A")
+        
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks[0].priority, .medium)
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    // TDD High priority stroe test
+    func test_assTask_withHighPriority_storesPriority() {
+        // Arrange
+        
+        
+        // Act
+        viewModel.addTask(title: "Urgent", priority: .high)
+        
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks[0].priority, .high)
     }
-
+    
+    // TDD Test task with pirority returns only matching
+    func test_task_forPriority_returnsOnlyMatchingTask() {
+        // Arrange
+        viewModel.addTask(title: "Low", priority: .low)
+        viewModel.addTask(title: "High 1", priority: .high)
+        viewModel.addTask(title: "High 2", priority: .high)
+        
+        
+        // Act
+        let highTasks = viewModel.tasks(for: .high)
+        
+        
+        // Assert
+        XCTAssertEqual(highTasks.count, 2)
+        XCTAssertTrue(highTasks.allSatisfy {$0.priority == .high})
+    }
+    
+    // TDD Test task sorted by priority high first
+    func test_taskSortedByPriority_returnHighFirst() {
+        // Arrange
+        viewModel.addTask(title: "Low", priority: .low)
+        viewModel.addTask(title: "Medium", priority: .medium)
+        viewModel.addTask(title: "High", priority: .high)
+        
+        
+        // Act
+        let sorted = viewModel.taskSortedByPriority
+        
+        
+        // Assert
+        XCTAssertEqual(sorted[0].priority, .high)
+        XCTAssertEqual(sorted[1].priority, .medium)
+        XCTAssertEqual(sorted[2].priority, .low)
+    }
+    
+    
 }
+
+
