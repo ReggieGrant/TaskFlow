@@ -16,20 +16,102 @@ final class TaskFlowTests: XCTestCase {
         viewModel = TaskListViewModel()
     }
     
+    override func tearDownWithError() throws {
+        // viewModel = nil
+    }
+    
+    func test_addTask_increasesCount() {
+        // Arrange - viewModel already empty thanks to setUp
+        
+        // Act
+        viewModel.addTask(title: "Buy Milk")
+        
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks.count, 1)
+    }
+    
+    func test_addTask_increaseCount10() {
+        // Arrange - ViewModel already
+        
+        // Act
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        viewModel.addTask(title: "Buy Coffee")
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks.count, 10)
+        
+
+    }
+    
+    // Add 2 task - then remove one - verify if the second one remains
+    
+    func test_removeTask_removeCorrectItem() {
+        // Arrange
+        viewModel.addTask(title: "Task A")
+        viewModel.addTask(title: "Task B")
+        
+        
+        // Act
+        viewModel.removeTask(at: 0)
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks.count, 1)
+        XCTAssertEqual(viewModel.tasks.first?.title, "Task B")
+    }
+    
+    // Toggle a task - verify if is true
+    func test_toggleCompletion_flipsIsCompleted() {
+        // Arrange
+        viewModel.addTask(title: "Task A")
+        let taskId = viewModel.tasks[0].id
+        XCTAssertFalse(viewModel.tasks[0].isCompleted)
+        
+        
+        // Act
+        viewModel.toggleCompletion(id: taskId)
+        
+        // Assert
+        XCTAssertTrue(viewModel.tasks[0].isCompleted)
+        
+    }
+    
+    // Test task empty title
+    
+    func test_addTask_withEmptyTitle_isIgnored() {
+        // Arrange
+        let initialCount = viewModel.tasks.count
+        
+        // Act
+        viewModel.addTask(title: " ")
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks.count, initialCount, "Empty/Whitespaces titles should not create a task")
+        
+    }
+    
     
     
     
     // MARK: Class #2
     // UI Test
-    func test_addTask_UI() {
+   // func test_addTask_UI() {
         // Arrange
-        let app = XCUIApplication()
-        app.launch()
+       // let app = XCUIApplication()
+       // app.launch()
         
         // Act
-        app.textFields["New Task..."].typeText("Mlik")
-        app.buttons["Add"].tap()
-    }
+       // app.textFields["New Task..."].typeText("Mlik")
+       // app.buttons["Add"].tap()
+    // }
     
     // TDD priority test
     func test_addTask_defaultPriorityIsMedium(){

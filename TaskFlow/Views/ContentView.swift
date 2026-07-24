@@ -25,7 +25,7 @@ struct ContentView: View {
                     .accessibilityIdentifier("add_task_button")
                 }
                 .padding()
-List {
+                List {
                     ForEach(viewModel.tasks) { task in
                         HStack {
                             Text(task.title)
